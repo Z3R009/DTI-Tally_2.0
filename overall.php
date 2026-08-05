@@ -43,7 +43,7 @@ include 'includes/header.php';
         color: var(--gold);
         font-weight: 600;
         margin-bottom: 10px;
-    }   
+    }
 
     .hero-title {
         font-family: 'Oswald', sans-serif;
@@ -254,6 +254,35 @@ include 'includes/header.php';
         font-weight: 600;
         text-align: right;
     }
+
+
+    /* hide button */
+
+    .admin-access-btn {
+        display: none;
+    }
+
+    /* leaderboard button */
+
+    .leaderboard-btn {
+        display: inline-block;
+        padding: 10px 24px;
+        background-color: #0d6efd;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: 0.3s ease;
+        border: none;
+    }
+
+    .leaderboard-btn:hover {
+        background-color: #0b5ed7;
+        color: #fff;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(13, 110, 253, .3);
+    }
 </style>
 
 <?php
@@ -378,10 +407,37 @@ $top3 = array_slice($standings, 0, 3);
     </div>
 </div>
 
+<center>
+    <a href="leaderboard.php" class="leaderboard-btn"></i> Go to Leaderboards</a>
+</center>
+
 <?php if (!is_logged_in()) { ?>
-    <a href="login.php" class="admin-access-btn" title="Admin">
+    <a href="login.php" id="adminAccessBtn" class="admin-access-btn" title="Admin">
         <i class="bi bi-gear-fill"></i>
     </a>
 <?php } ?>
 
 <?php include 'includes/footer.php'; ?>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const adminBtn = document.getElementById("adminAccessBtn");
+
+        if (!adminBtn) return;
+
+        document.addEventListener("keydown", function(e) {
+            if (e.code === "Space") {
+                e.preventDefault(); // Prevent page scrolling
+                adminBtn.style.display = "flex"; // or "block"/"inline-flex"
+            }
+        });
+
+        document.addEventListener("keyup", function(e) {
+            if (e.code === "Space") {
+                adminBtn.style.display = "none";
+            }
+        });
+
+    });
+</script>
