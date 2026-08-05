@@ -1,7 +1,7 @@
 <?php
 include 'config/database.php';
 include 'includes/auth.php';
-include 'includes/header.php';
+// include 'includes/header.php';
 ?>
 
 <?php if (is_logged_in()) {

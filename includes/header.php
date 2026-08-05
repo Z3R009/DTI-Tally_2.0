@@ -11,11 +11,15 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
+
+
 </head>
+
+
 
 <body>
 
-    <nav class="navbar navbar-dark bg-primary">
+    <nav class="navbar navbar-dark bg-primary sticky-top shadow">
 
 
         <div class="container-fluid d-flex align-items-center gap-3">
