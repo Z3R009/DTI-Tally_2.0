@@ -9,89 +9,89 @@ include 'includes/header.php';
 
 <div class="container-fluid p-4">
 
-<div class="card">
+    <div class="card">
 
-<div class="card-header bg-primary text-white">
-    <h4>Leaderboard</h4>
-</div>
+        <div class="card-header bg-primary text-white">
+            <h4>Leaderboard</h4>
+        </div>
 
-<div class="card-body">
+        <div class="card-body">
 
-<form method="GET">
+            <form method="GET">
 
-<div class="row">
+                <div class="row">
 
-<div class="col-md-6">
+                    <div class="col-md-6">
 
-<label>Select Competition/Event</label>
+                        <label>Select Competition/Event</label>
 
-<select name="event" class="form-select" onchange="this.form.submit()">
+                        <select name="event" class="form-select" onchange="this.form.submit()">
 
-<option value="">-- Select Event --</option>
+                            <option value="">-- Select Event --</option>
 
-<?php
+                            <?php
 
-$events = $conn->query("SELECT * FROM events ORDER BY event_name");
+                            $events = $conn->query("SELECT * FROM events ORDER BY event_name");
 
-while($e = $events->fetch_assoc()){
+                            while ($e = $events->fetch_assoc()) {
 
-    $selected = "";
+                                $selected = "";
 
-    if(isset($_GET['event']) && $_GET['event'] == $e['id'])
-        $selected = "selected";
+                                if (isset($_GET['event']) && $_GET['event'] == $e['id'])
+                                    $selected = "selected";
 
-    echo "<option value='{$e['id']}' $selected>{$e['event_name']}</option>";
-}
+                                echo "<option value='{$e['id']}' $selected>{$e['event_name']}</option>";
+                            }
 
-?>
+                            ?>
 
-</select>
+                        </select>
 
-</div>
+                    </div>
 
-</div>
+                </div>
 
-</form>
+            </form>
 
-<hr>
+            <hr>
 
-<?php
+            <?php
 
-if(isset($_GET['event'])){
+            if (isset($_GET['event'])) {
 
-    $eventID = intval($_GET['event']);
+                $eventID = intval($_GET['event']);
 
-    $event = $conn->query("SELECT * FROM events WHERE id=$eventID")->fetch_assoc();
+                $event = $conn->query("SELECT * FROM events WHERE id=$eventID")->fetch_assoc();
 
-?>
+            ?>
 
-<h5 class="mb-3">
-<?= htmlspecialchars($event['event_name']) ?>
-</h5>
+                <h5 class="mb-3">
+                    <?= htmlspecialchars($event['event_name']) ?>
+                </h5>
 
-<table class="table table-bordered table-hover">
+                <table class="table table-bordered table-hover">
 
-<thead class="table-dark">
+                    <thead class="table-dark">
 
-<tr>
+                        <tr>
 
-<th width="10%">Rank</th>
+                            <!-- <th width="10%">Rank</th> -->
 
-<th>Team</th>
+                            <th>Team</th>
 
-<th width="15%">Placement</th>
+                            <th width="15%">Placement</th>
 
-<th width="15%">Points</th>
+                            <th width="15%">Points</th>
 
-</tr>
+                        </tr>
 
-</thead>
+                    </thead>
 
-<tbody>
+                    <tbody>
 
-<?php
+                        <?php
 
-$sql = "
+                        $sql = "
 
 SELECT
 
@@ -110,73 +110,72 @@ ORDER BY scores.points DESC, scores.placement ASC
 
 ";
 
-$result = $conn->query($sql);
+                        $result = $conn->query($sql);
 
-$rank = 1;
-$displayRank = 1;
-$lastPoints = null;
+                        $rank = 1;
+                        $displayRank = 1;
+                        $lastPoints = null;
 
-while($row = $result->fetch_assoc()){
+                        while ($row = $result->fetch_assoc()) {
 
-    if($lastPoints !== null && $row['points'] < $lastPoints){
-        $displayRank = $rank;
-    }
+                            if ($lastPoints !== null && $row['points'] < $lastPoints) {
+                                $displayRank = $rank;
+                            }
 
-    $medal = "";
+                            $medal = "";
 
-    switch($displayRank){
+                            switch ($displayRank) {
 
-        case 1:
-            $medal = "🥇";
-            $class = "table-warning";
-            break;
+                                case 1:
+                                    $medal = "🥇";
+                                    $class = "table-warning";
+                                    break;
 
-        case 2:
-            $medal = "🥈";
-            $class = "table-secondary";
-            break;
+                                case 2:
+                                    $medal = "🥈";
+                                    $class = "table-secondary";
+                                    break;
 
-        case 3:
-            $medal = "🥉";
-            $class = "table-danger";
-            break;
+                                case 3:
+                                    $medal = "🥉";
+                                    $class = "table-danger";
+                                    break;
 
-        default:
-            $class = "";
-    }
+                                default:
+                                    $class = "";
+                            }
 
-?>
+                        ?>
 
-<tr class="<?= $class ?>">
+                            <tr class="<?= $class ?>">
 
-<td><?= $medal ?> <?= $displayRank ?></td>
+                                <!-- <td><?= $medal ?> <?= $displayRank ?></td> -->
 
-<td><?= htmlspecialchars($row['team_name']) ?></td>
+                                <td><?= htmlspecialchars($row['team_name']) ?></td>
 
-<td><?= $row['placement'] ?></td>
+                                <td><?= $row['placement'] ?></td>
 
-<td><strong><?= $row['points'] ?></strong></td>
+                                <td><strong><?= $row['points'] ?></strong></td>
 
-</tr>
+                            </tr>
 
-<?php
+                        <?php
 
-$lastPoints = $row['points'];
-$rank++;
+                            $lastPoints = $row['points'];
+                            $rank++;
+                        }
 
-}
+                        ?>
 
-?>
+                    </tbody>
 
-</tbody>
+                </table>
 
-</table>
+            <?php } ?>
 
-<?php } ?>
+        </div>
 
-</div>
-
-</div>
+    </div>
 
 </div>
 

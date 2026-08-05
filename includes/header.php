@@ -21,13 +21,13 @@
         <div class="container-fluid d-flex align-items-center gap-3">
 
             <div class="logo-badge">
-                <img src="assets/images/dti-logo_2.png"
+                <img src="assets/images/logo.png"
 
                     height="52">
             </div>
 
             <h3 class="text-white mb-0">
-                DTI XII SPORTS FEST SCORING SYSTEM
+                DTI XII SPORTSFEST SCORING SYSTEM
             </h3>
 
         </div>

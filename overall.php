@@ -43,7 +43,7 @@ include 'includes/header.php';
         color: var(--gold);
         font-weight: 600;
         margin-bottom: 10px;
-    }
+    }   
 
     .hero-title {
         font-family: 'Oswald', sans-serif;
