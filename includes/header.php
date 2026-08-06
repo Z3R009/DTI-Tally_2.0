@@ -16,7 +16,14 @@
 </head>
 
 <style>
-    
+    h3 {
+        margin: 0;
+        font-family: 'Oswald', sans-serif;
+        font-size: 2rem;
+        letter-spacing: 1px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
 </style>
 
 
@@ -35,7 +42,8 @@
             </div>
 
             <h3 class="text-white mb-0">
-                DTI XII SPORTSFEST SCORING SYSTEM
+                <i class="bi bi-trophy-fill text-warning"></i>
+                DTI XII SPORTSFEST
             </h3>
 
         </div>
