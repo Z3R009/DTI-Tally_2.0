@@ -1,7 +1,7 @@
 <?php
 include 'config/database.php';
 include 'includes/auth.php';
-// include 'includes/header.php';
+include 'includes/header.php';
 ?>
 
 <?php if (is_logged_in()) {
@@ -108,7 +108,7 @@ include 'includes/auth.php';
 
     .rank-1 .medal-icon {
         color: var(--gold);
-        font-size: 1.9rem;
+        font-size: 3.5rem;
     }
 
     .rank-2 .medal-icon {
@@ -117,6 +117,76 @@ include 'includes/auth.php';
 
     .rank-3 .medal-icon {
         color: var(--bronze);
+    }
+
+    .team-avatar {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        margin-bottom: 8px;
+        border: 3px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .rank-1 .team-avatar {
+        width: 150px;
+        height: 150px;
+        border-color: var(--gold);
+    }
+
+    .rank-2 .team-avatar {
+        border-color: var(--silver);
+    }
+
+    .rank-3 .team-avatar {
+        border-color: var(--bronze);
+    }
+
+    .team-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .team-avatar .avatar-initial {
+        font-family: 'Oswald', sans-serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: var(--navy);
+    }
+
+    .avatar-medal {
+        position: absolute;
+        bottom: -2px;
+        right: -2px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        border: 2px solid var(--navy-deep);
+    }
+
+    .avatar-medal.gold {
+        background: var(--gold);
+        color: var(--gold-dark);
+    }
+
+    .avatar-medal.silver {
+        background: var(--silver);
+        color: var(--silver-dark);
+    }
+
+    .avatar-medal.bronze {
+        background: var(--bronze);
+        color: var(--bronze-dark);
     }
 
     .podium-team {
@@ -255,6 +325,38 @@ include 'includes/auth.php';
         text-align: right;
     }
 
+    .team-cell-inner {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .team-thumb {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--paper);
+        border: 1px solid #e7e9f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .team-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .team-thumb .thumb-initial {
+        font-family: 'Oswald', sans-serif;
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: var(--navy);
+    }
+
 
     /* hide button */
 
@@ -287,14 +389,23 @@ include 'includes/auth.php';
 
 <?php
 
+function team_logo_url($logo)
+{
+    if ($logo && file_exists(__DIR__ . '/assets/images/team-logos/' . $logo)) {
+        return 'assets/images/team-logos/' . rawurlencode($logo);
+    }
+    return null;
+}
+
 $sql = "
 SELECT
     teams.team_name,
+    teams.logo,
     COALESCE(SUM(scores.points),0) AS total
 FROM teams
 LEFT JOIN scores
     ON teams.id = scores.team_id
-GROUP BY teams.id, teams.team_name
+GROUP BY teams.id, teams.team_name, teams.logo
 ORDER BY total DESC";
 
 $result = $conn->query($sql);
@@ -313,6 +424,7 @@ while ($row = $result->fetch_assoc()) {
     $standings[] = [
         'rank'      => $displayRank,
         'team_name' => $row['team_name'],
+        'logo'      => $row['logo'],
         'total'     => $row['total'],
     ];
 
@@ -335,7 +447,15 @@ $top3 = array_slice($standings, 0, 3);
 
             <?php if (isset($top3[1])) { ?>
                 <div class="podium-spot rank-2">
-                    <i class="bi bi-award-fill medal-icon"></i>
+                    <div class="team-avatar">
+                        <?php $logoUrl = team_logo_url($top3[1]['logo']); ?>
+                        <?php if ($logoUrl) { ?>
+                            <img src="<?= htmlspecialchars($logoUrl) ?>" alt="">
+                        <?php } else { ?>
+                            <span class="avatar-initial"><?= htmlspecialchars(strtoupper(substr($top3[1]['team_name'], 0, 1))) ?></span>
+                        <?php } ?>
+                        <!-- <span class="avatar-medal silver"><i class="bi bi-award-fill"></i></span> -->
+                    </div>
                     <div class="podium-team"><?= htmlspecialchars($top3[1]['team_name']) ?></div>
                     <div class="podium-points"><?= $top3[1]['total'] ?> pts</div>
                     <div class="podium-block"><?= $top3[1]['rank'] ?></div>
@@ -343,7 +463,15 @@ $top3 = array_slice($standings, 0, 3);
             <?php } ?>
 
             <div class="podium-spot rank-1">
-                <i class="bi bi-trophy-fill medal-icon"></i>
+                <div class="team-avatar">
+                    <?php $logoUrl = team_logo_url($top3[0]['logo']); ?>
+                    <?php if ($logoUrl) { ?>
+                        <img src="<?= htmlspecialchars($logoUrl) ?>" alt="">
+                    <?php } else { ?>
+                        <span class="avatar-initial"><?= htmlspecialchars(strtoupper(substr($top3[0]['team_name'], 0, 1))) ?></span>
+                    <?php } ?>
+                    <!-- <span class="avatar-medal gold"><i class="bi bi-trophy-fill"></i></span> -->
+                </div>
                 <div class="podium-team"><?= htmlspecialchars($top3[0]['team_name']) ?></div>
                 <div class="podium-points"><?= $top3[0]['total'] ?> pts</div>
                 <div class="podium-block"><?= $top3[0]['rank'] ?></div>
@@ -351,7 +479,15 @@ $top3 = array_slice($standings, 0, 3);
 
             <?php if (isset($top3[2])) { ?>
                 <div class="podium-spot rank-3">
-                    <i class="bi bi-award-fill medal-icon"></i>
+                    <div class="team-avatar">
+                        <?php $logoUrl = team_logo_url($top3[2]['logo']); ?>
+                        <?php if ($logoUrl) { ?>
+                            <img src="<?= htmlspecialchars($logoUrl) ?>" alt="">
+                        <?php } else { ?>
+                            <span class="avatar-initial"><?= htmlspecialchars(strtoupper(substr($top3[2]['team_name'], 0, 1))) ?></span>
+                        <?php } ?>
+                        <!-- <span class="avatar-medal bronze"><i class="bi bi-award-fill"></i></span> -->
+                    </div>
                     <div class="podium-team"><?= htmlspecialchars($top3[2]['team_name']) ?></div>
                     <div class="podium-points"><?= $top3[2]['total'] ?> pts</div>
                     <div class="podium-block"><?= $top3[2]['rank'] ?></div>
@@ -391,7 +527,19 @@ $top3 = array_slice($standings, 0, 3);
                                     <?= $row['rank'] ?>
                                 <?php } ?>
                             </td>
-                            <td class="team-cell"><?= htmlspecialchars($row['team_name']) ?></td>
+                            <td class="team-cell">
+                                <div class="team-cell-inner">
+                                    <div class="team-thumb">
+                                        <?php $logoUrl = team_logo_url($row['logo']); ?>
+                                        <?php if ($logoUrl) { ?>
+                                            <img src="<?= htmlspecialchars($logoUrl) ?>" alt="">
+                                        <?php } else { ?>
+                                            <span class="thumb-initial"><?= htmlspecialchars(strtoupper(substr($row['team_name'], 0, 1))) ?></span>
+                                        <?php } ?>
+                                    </div>
+                                    <span><?= htmlspecialchars($row['team_name']) ?></span>
+                                </div>
+                            </td>
                             <td class="points-cell"><?= $row['total'] ?></td>
                         </tr>
                     <?php } ?>

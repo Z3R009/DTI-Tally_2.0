@@ -7,105 +7,128 @@ include 'includes/header.php';
 
 <?php include 'includes/topnav.php'; ?>
 
+<style>
+    td:nth-child(1),
+    th:nth-child(1) {
+        display: none;
+    }
+</style>
+
 <div class="container-fluid p-4">
 
-<div class="card">
+    <div class="card">
 
-<div class="card-header bg-primary text-white">
-<h4>Teams</h4>
-</div>
+        <div class="card-header bg-primary text-white">
+            <h4>Teams</h4>
+        </div>
 
-<div class="card-body">
+        <div class="card-body">
 
-<form action="actions/add_team.php" method="POST">
+            <?php if (!empty($_GET['logo_error'])) { ?>
+                <div class="alert alert-warning"><?= htmlspecialchars($_GET['logo_error']) ?></div>
+            <?php } ?>
 
-<div class="row">
+            <form action="actions/add_team.php" method="POST" enctype="multipart/form-data">
 
-<div class="col-md-8">
-<input
-type="text"
-name="team_name"
-class="form-control"
-placeholder="Enter Team Name"
-required>
-</div>
+                <div class="row g-2">
 
-<div class="col-md-4">
-<button class="btn btn-primary w-100">
-Save Team
-</button>
-</div>
+                    <div class="col-md-5">
+                        <input
+                            type="text"
+                            name="team_name"
+                            class="form-control"
+                            placeholder="Enter Team Name"
+                            required>
+                    </div>
 
-</div>
+                    <div class="col-md-4">
+                        <input
+                            type="file"
+                            name="team_logo"
+                            class="form-control"
+                            accept="image/*">
+                    </div>
 
-</form>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary w-100">
+                            Save Team
+                        </button>
+                    </div>
 
-<hr>
+                </div>
 
-<table class="table table-bordered table-hover">
+            </form>
 
-<thead>
+            <hr>
 
-<tr>
+            <table class="table table-bordered table-hover">
 
-<th width="10%">ID</th>
+                <thead>
 
-<th>Team Name</th>
+                    <tr>
 
-<th width="20%">Action</th>
+                        <th width="8%">ID</th>
 
-</tr>
+                        <th width="10%">Logo</th>
 
-</thead>
+                        <th>Team Name</th>
 
-<tbody>
+                        <th width="20%">Action</th>
 
-<?php
+                    </tr>
 
-$result = $conn->query("SELECT * FROM teams ORDER BY team_name");
+                </thead>
 
-while($row=$result->fetch_assoc()){
+                <tbody>
 
-?>
+                    <?php
 
-<tr>
+                    $result = $conn->query("SELECT * FROM teams ORDER BY team_name");
 
-<td><?= $row['id'] ?></td>
+                    while ($row = $result->fetch_assoc()) {
 
-<td><?= $row['team_name'] ?></td>
+                    ?>
 
-<td>
+                        <tr>
 
-<a
-href="edit_team.php?id=<?= $row['id'] ?>"
-class="btn btn-warning btn-sm">
+                            <td><?= $row['id'] ?></td>
 
-Edit
+                            <td>
+                                <?php if (!empty($row['logo']) && file_exists(__DIR__ . '/assets/images/team-logos/' . $row['logo'])) { ?>
+                                    <img src="assets/images/team-logos/<?= htmlspecialchars($row['logo']) ?>" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                                <?php } else { ?>
+                                    <span class="text-muted small">None</span>
+                                <?php } ?>
+                            </td>
 
-</a>
+                            <td><?= $row['team_name'] ?></td>
 
-<a
-href="actions/delete_team.php?id=<?= $row['id'] ?>"
-class="btn btn-danger btn-sm"
-onclick="return confirm('Delete this team?')">
+                            <td>
 
-Delete
+                                <a href="edit_team.php?id=<?= $row['id'] ?>"
+                                    class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
 
-</a>
+                                <a href="actions/delete_team.php?id=<?= $row['id'] ?>"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Delete this team?')">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
 
-</td>
+                            </td>
 
-</tr>
+                        </tr>
 
-<?php } ?>
+                    <?php } ?>
 
-</tbody>
+                </tbody>
 
-</table>
+            </table>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
 </div>
 

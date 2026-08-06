@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 05, 2026 at 07:17 AM
+-- Generation Time: Aug 06, 2026 at 02:03 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -53,7 +53,7 @@ INSERT INTO `events` (`id`, `event_name`, `category`, `max_points`, `created_at`
 (4, ' Mr. DTI Teambangan ng Bayan', 'Major', 0, '2026-08-05 02:31:40', 20, 15, 10, 0, 0, 0, 5),
 (5, 'Ms. DTI Teambangan ng Bayan', 'Major', 0, '2026-08-05 02:32:03', 20, 15, 10, 0, 0, 0, 5),
 (6, 'Rainbow Rumble', 'Major', 0, '2026-08-05 02:32:36', 20, 15, 10, 0, 0, 0, 5),
-(7, 'Amazing Minute Race ((Gen WOW)', 'Major', 0, '2026-08-05 02:33:13', 20, 15, 10, 0, 0, 0, 5),
+(7, 'Amazing Minute Race (Gen WOW)', 'Major', 0, '2026-08-05 02:33:13', 20, 15, 10, 0, 0, 0, 5),
 (8, 'Amazing Minute Race (Gen NOW)', 'Major', 0, '2026-08-05 02:33:35', 20, 15, 10, 0, 0, 0, 5),
 (9, 'Badminton (Doubles -Male)', 'Minor', 0, '2026-08-05 02:34:44', 15, 12, 10, 0, 0, 0, 5),
 (10, 'Badminton (Doubles - Female)', 'Minor', 0, '2026-08-05 02:35:31', 15, 12, 10, 0, 0, 0, 5),
@@ -89,10 +89,11 @@ CREATE TABLE `scores` (
 --
 
 INSERT INTO `scores` (`id`, `event_id`, `team_id`, `placement`, `points`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 1, 30, '2026-08-04 08:53:53', '2026-08-04 08:53:53'),
-(2, 14, 1, 1, 10, '2026-08-05 02:52:51', '2026-08-05 02:52:51'),
-(3, 3, 1, 2, 25, '2026-08-05 03:06:23', '2026-08-05 03:08:20'),
-(6, 14, 2, 2, 8, '2026-08-05 05:14:55', '2026-08-05 05:14:55');
+(27, 15, 7, 2, 8, '2026-08-05 08:20:46', '2026-08-05 08:20:46'),
+(28, 15, 6, 1, 10, '2026-08-05 08:20:46', '2026-08-05 08:20:46'),
+(29, 15, 10, 99, 5, '2026-08-05 08:20:46', '2026-08-05 08:20:46'),
+(30, 15, 8, 3, 6, '2026-08-05 08:20:46', '2026-08-05 08:20:46'),
+(31, 15, 9, 99, 5, '2026-08-05 08:20:46', '2026-08-05 08:20:46');
 
 -- --------------------------------------------------------
 
@@ -117,7 +118,32 @@ INSERT INTO `score_history` (`id`, `event_id`, `team_id`, `placement`, `points`,
 (1, 3, 1, 1, 30, '2026-08-05 11:06:23'),
 (2, 3, 1, 2, 25, '2026-08-05 11:08:20'),
 (3, 14, 1, 1, 10, '2026-08-05 13:14:55'),
-(4, 14, 2, 2, 8, '2026-08-05 13:14:55');
+(4, 14, 2, 2, 8, '2026-08-05 13:14:55'),
+(5, 14, 1, 1, 10, '2026-08-05 15:40:35'),
+(6, 14, 2, 2, 8, '2026-08-05 15:40:35'),
+(7, 14, 3, 3, 6, '2026-08-05 15:40:35'),
+(8, 14, 4, 4, 0, '2026-08-05 15:40:35'),
+(9, 14, 5, 5, 0, '2026-08-05 15:40:35'),
+(10, 14, 1, 1, 10, '2026-08-05 15:41:35'),
+(11, 14, 2, 2, 8, '2026-08-05 15:41:35'),
+(12, 14, 3, 3, 6, '2026-08-05 15:41:35'),
+(13, 14, 4, 4, 0, '2026-08-05 15:41:35'),
+(14, 14, 5, 99, 5, '2026-08-05 15:41:35'),
+(15, 14, 1, 1, 10, '2026-08-05 16:13:50'),
+(16, 14, 2, 2, 8, '2026-08-05 16:13:50'),
+(17, 14, 3, 3, 6, '2026-08-05 16:13:50'),
+(18, 14, 4, 4, 0, '2026-08-05 16:13:50'),
+(19, 14, 5, 99, 5, '2026-08-05 16:13:50'),
+(20, 14, 1, 1, 10, '2026-08-05 16:17:49'),
+(21, 14, 2, 2, 8, '2026-08-05 16:17:49'),
+(22, 14, 3, 3, 6, '2026-08-05 16:17:49'),
+(23, 14, 4, 99, 5, '2026-08-05 16:17:50'),
+(24, 14, 5, 99, 5, '2026-08-05 16:17:50'),
+(25, 15, 7, 2, 8, '2026-08-05 16:20:46'),
+(26, 15, 6, 1, 10, '2026-08-05 16:20:46'),
+(27, 15, 10, 99, 5, '2026-08-05 16:20:46'),
+(28, 15, 8, 3, 6, '2026-08-05 16:20:46'),
+(29, 15, 9, 99, 5, '2026-08-05 16:20:46');
 
 -- --------------------------------------------------------
 
@@ -128,16 +154,21 @@ INSERT INTO `score_history` (`id`, `event_id`, `team_id`, `placement`, `points`,
 CREATE TABLE `teams` (
   `id` int(11) NOT NULL,
   `team_name` varchar(100) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `logo` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `teams`
 --
 
-INSERT INTO `teams` (`id`, `team_name`, `created_at`) VALUES
-(1, 'Team A', '2026-08-04 08:39:52'),
-(2, 'Team B', '2026-08-05 05:14:39');
+INSERT INTO `teams` (`id`, `team_name`, `created_at`, `logo`) VALUES
+(6, 'Blue Thunders', '2026-08-05 08:19:25', NULL),
+(7, 'Black Phoenix', '2026-08-05 08:19:35', NULL),
+(8, 'Red Sultans', '2026-08-05 08:19:44', NULL),
+(9, 'Team Ultraviolet', '2026-08-05 08:19:54', NULL),
+(10, 'Golden Eagles', '2026-08-05 08:20:04', NULL),
+(11, 'Team A', '2026-08-06 00:00:38', NULL);
 
 -- --------------------------------------------------------
 
@@ -210,19 +241,19 @@ ALTER TABLE `events`
 -- AUTO_INCREMENT for table `scores`
 --
 ALTER TABLE `scores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `score_history`
 --
 ALTER TABLE `score_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `teams`
 --
 ALTER TABLE `teams`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `users`
