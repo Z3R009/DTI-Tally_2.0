@@ -56,11 +56,12 @@ include 'includes/header.php';
 
     .podium {
         display: flex;
-        align-items: flex-end;
+        flex-wrap: wrap;
         justify-content: center;
-        gap: 40px;
-        max-width: 640px;
-        margin: 0 auto;
+        align-items: flex-end;
+        gap: 20px;
+        max-width: 1200px;
+        margin: auto;
     }
 
     .podium-spot {
@@ -68,52 +69,20 @@ include 'includes/header.php';
         flex-direction: column;
         align-items: center;
         width: 160px;
-
-    }
-
-    @keyframes bounceUp {
-        0% {
-            opacity: 0;
-            transform: translateY(80px);
-        }
-
-        50% {
-            opacity: 1;
-            transform: translateY(-18px);
-        }
-
-        75% {
-            transform: translateY(8px);
-        }
-
-        90% {
-            transform: translateY(-3px);
-        }
-
-        100% {
-            transform: translateY(0);
-        }
-    }
-
-    /* .podium-spot.rank-5 {
-        animation-delay: .20s;
-    }
-
-    .podium-spot.rank-4 {
-        animation-delay: .40s;
-    }
-
-    .podium-spot.rank-3 {
-        animation-delay: .60s;
+        animation: rise 0.6s ease both;
     }
 
     .podium-spot.rank-2 {
-        animation-delay: .80s;
+        animation-delay: 0.05s;
     }
 
     .podium-spot.rank-1 {
-        animation-delay: 1.00s;
-    } */
+        animation-delay: 0.2s;
+    }
+
+    .podium-spot.rank-3 {
+        animation-delay: 0.35s;
+    }
 
     @keyframes rise {
         from {
@@ -153,8 +122,8 @@ include 'includes/header.php';
 
     .team-avatar {
         position: relative;
-        width: 150px;
-        height: 150px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
         background: #fff;
         display: flex;
@@ -163,34 +132,20 @@ include 'includes/header.php';
         overflow: hidden;
         margin-bottom: 8px;
         border: 3px solid rgba(255, 255, 255, 0.25);
-        animation: bounceUp 1.2s cubic-bezier(.22, 1, .36, 1) both;
     }
 
     .rank-1 .team-avatar {
-        width: 180px;
-        height: 180px;
+        width: 150px;
+        height: 150px;
         border-color: var(--gold);
-        animation-delay: 1.00s;
     }
 
     .rank-2 .team-avatar {
         border-color: var(--silver);
-        animation-delay: .80s;
     }
 
     .rank-3 .team-avatar {
         border-color: var(--bronze);
-        animation-delay: .60s;
-    }
-
-    .rank-4 .team-avatar {
-        border-color: #5B7DB1;
-        animation-delay: .40s;
-    }
-
-    .rank-5 .team-avatar {
-        border-color: #4CAF50;
-        animation-delay: .20s;
     }
 
     .team-avatar img {
@@ -248,8 +203,8 @@ include 'includes/header.php';
     }
 
     .podium-points {
-        font-size: 20px;
-        color: gold;
+        font-size: 0.82rem;
+        color: rgba(255, 255, 255, 0.6);
         margin-bottom: 14px;
     }
 
@@ -266,33 +221,33 @@ include 'includes/header.php';
     }
 
     .rank-1 .podium-block {
-        height: 150px;
+        height: 132px;
         background: linear-gradient(180deg, var(--gold), #d69a2b);
         color: var(--gold-dark);
     }
 
     .rank-2 .podium-block {
-        height: 120px;
+        height: 98px;
         background: linear-gradient(180deg, var(--silver), #9aa5b1);
         color: var(--silver-dark);
     }
 
     .rank-3 .podium-block {
-        height: 100px;
+        height: 70px;
         background: linear-gradient(180deg, var(--bronze), #b96b34);
         color: var(--bronze-dark);
     }
 
-    .rank-4 .podium-block {
-        height: 70px;
-        background: #5B7DB1;
-        color: var(--bronze-dark);
+    .rank-other .team-avatar {
+        width: 90px;
+        height: 90px;
+        border-color: #ddd;
     }
 
-    .rank-5 .podium-block {
-        height: 50px;
-        background: #4CAF50;
-        color: var(--bronze-dark);
+    .rank-other .podium-block {
+        height: 55px;
+        background: #dee2e6;
+        color: #495057;
     }
 
     .standings-wrap {
@@ -416,13 +371,11 @@ include 'includes/header.php';
     }
 
 
-    /* hide button */
 
     .admin-access-btn {
         display: none;
     }
 
-    /* leaderboard button */
 
     .leaderboard-btn {
         display: inline-block;
@@ -490,7 +443,7 @@ while ($row = $result->fetch_assoc()) {
     $rank++;
 }
 
-$top3 = array_slice($standings, 0, 5);
+$podiumTeams = $standings;
 
 ?>
 
@@ -499,91 +452,66 @@ $top3 = array_slice($standings, 0, 5);
     <div class="hero-eyebrow"><i class="bi bi-star-fill"></i> Live Standings</div>
     <h1 class="hero-title">Overall Rankings</h1>
 
-    <?php if (count($top3) > 0) { ?>
+    <?php if (count($podiumTeams) > 0) { ?>
 
         <div class="podium">
 
-            <?php if (isset($top3[3])) { ?>
-                <div class="podium-spot rank-4">
-                    <div class="team-avatar">
-                        <?php $logoUrl = team_logo_url($top3[3]['logo']); ?>
-                        <?php if ($logoUrl) { ?>
-                            <img src="<?= htmlspecialchars($logoUrl) ?>" alt="">
-                        <?php } else { ?>
-                            <span class="avatar-initial"><?= htmlspecialchars(strtoupper(substr($top3[3]['team_name'], 0, 1))) ?></span>
-                        <?php } ?>
-                        <!-- <span class="avatar-medal silver"><i class="bi bi-award-fill"></i></span> -->
-                    </div>
-                    <div class="podium-team"><?= htmlspecialchars($top3[3]['team_name']) ?></div>
-                    <div class="podium-points"><?= $top3[3]['total'] ?> pts</div>
-                    <div class="podium-block"><?= $top3[3]['rank'] ?></div>
-                </div>
-            <?php } ?>
+            <?php foreach ($podiumTeams as $team) { ?>
 
-            <?php if (isset($top3[1])) { ?>
-                <div class="podium-spot rank-2">
-                    <div class="team-avatar">
-                        <?php $logoUrl = team_logo_url($top3[1]['logo']); ?>
-                        <?php if ($logoUrl) { ?>
-                            <img src="<?= htmlspecialchars($logoUrl) ?>" alt="">
-                        <?php } else { ?>
-                            <span class="avatar-initial"><?= htmlspecialchars(strtoupper(substr($top3[1]['team_name'], 0, 1))) ?></span>
-                        <?php } ?>
-                        <!-- <span class="avatar-medal silver"><i class="bi bi-award-fill"></i></span> -->
-                    </div>
-                    <div class="podium-team"><?= htmlspecialchars($top3[1]['team_name']) ?></div>
-                    <div class="podium-points"><?= $top3[1]['total'] ?> pts</div>
-                    <div class="podium-block"><?= $top3[1]['rank'] ?></div>
-                </div>
-            <?php } ?>
+                <?php
 
-            <div class="podium-spot rank-1">
-                <div class="team-avatar">
-                    <?php $logoUrl = team_logo_url($top3[0]['logo']); ?>
-                    <?php if ($logoUrl) { ?>
-                        <img src="<?= htmlspecialchars($logoUrl) ?>" alt="">
-                    <?php } else { ?>
-                        <span class="avatar-initial"><?= htmlspecialchars(strtoupper(substr($top3[0]['team_name'], 0, 1))) ?></span>
-                    <?php } ?>
-                    <!-- <span class="avatar-medal gold"><i class="bi bi-trophy-fill"></i></span> -->
-                </div>
-                <div class="podium-team"><?= htmlspecialchars($top3[0]['team_name']) ?></div>
-                <div class="podium-points"><?= $top3[0]['total'] ?> pts</div>
-                <div class="podium-block"><?= $top3[0]['rank'] ?></div>
-            </div>
+                $class = '';
 
-            <?php if (isset($top3[2])) { ?>
-                <div class="podium-spot rank-3">
-                    <div class="team-avatar">
-                        <?php $logoUrl = team_logo_url($top3[2]['logo']); ?>
-                        <?php if ($logoUrl) { ?>
-                            <img src="<?= htmlspecialchars($logoUrl) ?>" alt="">
-                        <?php } else { ?>
-                            <span class="avatar-initial"><?= htmlspecialchars(strtoupper(substr($top3[2]['team_name'], 0, 1))) ?></span>
-                        <?php } ?>
-                        <!-- <span class="avatar-medal bronze"><i class="bi bi-award-fill"></i></span> -->
-                    </div>
-                    <div class="podium-team"><?= htmlspecialchars($top3[2]['team_name']) ?></div>
-                    <div class="podium-points"><?= $top3[2]['total'] ?> pts</div>
-                    <div class="podium-block"><?= $top3[2]['rank'] ?></div>
-                </div>
-            <?php } ?>
+                switch ($team['rank']) {
+                    case 1:
+                        $class = 'rank-1';
+                        break;
+                    case 2:
+                        $class = 'rank-2';
+                        break;
+                    case 3:
+                        $class = 'rank-3';
+                        break;
+                    default:
+                        $class = 'rank-other';
+                }
 
-            <?php if (isset($top3[4])) { ?>
-                <div class="podium-spot rank-5">
+                ?>
+
+                <div class="podium-spot <?= $class ?>">
+
                     <div class="team-avatar">
-                        <?php $logoUrl = team_logo_url($top3[4]['logo']); ?>
+
+                        <?php $logoUrl = team_logo_url($team['logo']); ?>
+
                         <?php if ($logoUrl) { ?>
-                            <img src="<?= htmlspecialchars($logoUrl) ?>" alt="">
+
+                            <img src="<?= htmlspecialchars($logoUrl) ?>">
+
                         <?php } else { ?>
-                            <span class="avatar-initial"><?= htmlspecialchars(strtoupper(substr($top3[4]['team_name'], 0, 1))) ?></span>
+
+                            <span class="avatar-initial">
+                                <?= strtoupper(substr($team['team_name'], 0, 1)) ?>
+                            </span>
+
                         <?php } ?>
-                        <!-- <span class="avatar-medal silver"><i class="bi bi-award-fill"></i></span> -->
+
                     </div>
-                    <div class="podium-team"><?= htmlspecialchars($top3[4]['team_name']) ?></div>
-                    <div class="podium-points"><?= $top3[4]['total'] ?> pts</div>
-                    <div class="podium-block"><?= $top3[4]['rank'] ?></div>
+
+                    <div class="podium-team">
+                        <?= htmlspecialchars($team['team_name']) ?>
+                    </div>
+
+                    <div class="podium-points">
+                        <?= $team['total'] ?> pts
+                    </div>
+
+                    <div class="podium-block">
+                        <?= $team['rank'] ?>
+                    </div>
+
                 </div>
+
             <?php } ?>
 
         </div>
@@ -610,7 +538,7 @@ $top3 = array_slice($standings, 0, 5);
                         <tr>
                             <td class="rank-cell">
                                 <?php if ($row['rank'] == 1) { ?>
-                                    <span class="medal-badge gold"><?= $row['rank'] ?></span>
+                                    <span class="medal-badge silver"><?= $row['rank'] ?></span>
                                 <?php } elseif ($row['rank'] == 2) { ?>
                                     <span class="medal-badge silver"><?= $row['rank'] ?></span>
                                 <?php } elseif ($row['rank'] == 3) { ?>
@@ -668,8 +596,8 @@ $top3 = array_slice($standings, 0, 5);
 
         document.addEventListener("keydown", function(e) {
             if (e.code === "Space") {
-                e.preventDefault(); // Prevent page scrolling
-                adminBtn.style.display = "flex"; // or "block"/"inline-flex"
+                e.preventDefault();
+                adminBtn.style.display = "flex";
             }
         });
 
