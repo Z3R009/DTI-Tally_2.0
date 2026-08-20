@@ -372,6 +372,16 @@ include 'includes/header.php';
         color: var(--bronze-dark);
     }
 
+    .medal-badge.place4 {
+        background: #e4ecf6;
+        color: #3d5a80;
+    }
+
+    .medal-badge.place5 {
+        background: #e3f3e5;
+        color: #2e7d32;
+    }
+
     .team-cell {
         font-weight: 500;
         color: var(--ink);
@@ -443,6 +453,119 @@ include 'includes/header.php';
         transform: translateY(-2px);
         box-shadow: 0 4px 10px rgba(13, 110, 253, .3);
     }
+
+    /* idle slideshow */
+
+    .idle-slideshow {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: radial-gradient(circle at 50% -10%, var(--navy) 0%, var(--navy-deep) 65%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #fff;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.6s ease;
+        padding: 24px;
+    }
+
+    .idle-slideshow.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .idle-slideshow {
+            transition: none;
+        }
+    }
+
+    .idle-eyebrow {
+        font-size: 0.9rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--gold);
+        font-weight: 600;
+        margin-bottom: 14px;
+    }
+
+    .idle-event-name {
+        font-family: 'Oswald', sans-serif;
+        font-weight: 700;
+        font-size: clamp(1.6rem, 4vw, 2.4rem);
+        text-transform: uppercase;
+        max-width: 800px;
+        margin-bottom: 32px;
+    }
+
+    .idle-team-avatar {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: #fff;
+        border: 4px solid var(--gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .idle-team-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .idle-team-avatar span {
+        font-family: 'Oswald', sans-serif;
+        font-weight: 700;
+        font-size: 3rem;
+        color: var(--navy);
+    }
+
+    .idle-team-name {
+        font-family: 'Oswald', sans-serif;
+        font-weight: 700;
+        font-size: clamp(1.4rem, 3.5vw, 2rem);
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .idle-team-points {
+        font-size: 1.05rem;
+        color: var(--gold);
+        font-weight: 600;
+        margin-bottom: 40px;
+    }
+
+    .idle-dots {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+    }
+
+    .idle-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: background 0.3s ease;
+    }
+
+    .idle-dot.active {
+        background: var(--gold);
+    }
+
+    .idle-hint {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.45);
+        letter-spacing: 0.04em;
+    }
 </style>
 
 <?php
@@ -491,6 +614,30 @@ while ($row = $result->fetch_assoc()) {
 }
 
 $top3 = array_slice($standings, 0, 5);
+
+$eventWinnersSql = "
+SELECT
+    events.event_name,
+    teams.team_name,
+    teams.logo,
+    scores.points
+FROM events
+JOIN scores ON scores.event_id = events.id AND scores.placement = 1
+JOIN teams ON teams.id = scores.team_id
+ORDER BY events.event_name";
+
+$eventWinnersResult = $conn->query($eventWinnersSql);
+
+$eventWinners = [];
+
+while ($w = $eventWinnersResult->fetch_assoc()) {
+    $eventWinners[] = [
+        'event_name' => $w['event_name'],
+        'team_name'  => $w['team_name'],
+        'logo_url'   => team_logo_url($w['logo']),
+        'points'     => $w['points'],
+    ];
+}
 
 ?>
 
@@ -615,6 +762,10 @@ $top3 = array_slice($standings, 0, 5);
                                     <span class="medal-badge silver"><?= $row['rank'] ?></span>
                                 <?php } elseif ($row['rank'] == 3) { ?>
                                     <span class="medal-badge bronze"><?= $row['rank'] ?></span>
+                                <?php } elseif ($row['rank'] == 4) { ?>
+                                    <span class="medal-badge place4"><?= $row['rank'] ?></span>
+                                <?php } elseif ($row['rank'] == 5) { ?>
+                                    <span class="medal-badge place5"><?= $row['rank'] ?></span>
                                 <?php } else { ?>
                                     <?= $row['rank'] ?>
                                 <?php } ?>
@@ -657,6 +808,16 @@ $top3 = array_slice($standings, 0, 5);
     </a>
 <?php } ?>
 
+<div id="idleSlideshow" class="idle-slideshow">
+    <div class="idle-eyebrow">Event Champion</div>
+    <div class="idle-event-name" id="idleEventName"></div>
+    <div class="idle-team-avatar" id="idleTeamAvatar"></div>
+    <div class="idle-team-name" id="idleTeamName"></div>
+    <div class="idle-team-points" id="idleTeamPoints"></div>
+    <div class="idle-dots" id="idleDots"></div>
+    <div class="idle-hint">Move or tap to return to standings</div>
+</div>
+
 <?php include 'includes/footer.php'; ?>
 
 <script>
@@ -680,4 +841,88 @@ $top3 = array_slice($standings, 0, 5);
         });
 
     });
+</script>
+
+<script>
+    (function() {
+
+        const winners = <?= json_encode($eventWinners) ?>;
+
+        if (!winners.length) return;
+
+        const IDLE_DELAY = 20000; // how long the page must sit untouched before the slideshow starts
+        const SLIDE_INTERVAL = 4500; // how long each winner stays on screen
+
+        const overlay = document.getElementById("idleSlideshow");
+        const eventNameEl = document.getElementById("idleEventName");
+        const avatarEl = document.getElementById("idleTeamAvatar");
+        const teamNameEl = document.getElementById("idleTeamName");
+        const pointsEl = document.getElementById("idleTeamPoints");
+        const dotsEl = document.getElementById("idleDots");
+
+        let currentIndex = 0;
+        let idleTimer = null;
+        let slideTimer = null;
+
+        winners.forEach(function() {
+            const dot = document.createElement("span");
+            dot.className = "idle-dot";
+            dotsEl.appendChild(dot);
+        });
+
+        function renderSlide() {
+
+            const winner = winners[currentIndex];
+
+            eventNameEl.textContent = winner.event_name;
+            teamNameEl.textContent = winner.team_name;
+            pointsEl.textContent = winner.points + " pts \u00b7 1st Place";
+
+            if (winner.logo_url) {
+                avatarEl.innerHTML = "";
+                const img = document.createElement("img");
+                img.src = winner.logo_url;
+                img.alt = "";
+                avatarEl.appendChild(img);
+            } else {
+                avatarEl.innerHTML = "<span>" + winner.team_name.charAt(0).toUpperCase() + "</span>";
+            }
+
+            Array.prototype.forEach.call(dotsEl.children, function(dot, i) {
+                dot.classList.toggle("active", i === currentIndex);
+            });
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % winners.length;
+            renderSlide();
+        }
+
+        function startSlideshow() {
+            currentIndex = 0;
+            renderSlide();
+            overlay.classList.add("visible");
+            slideTimer = setInterval(nextSlide, SLIDE_INTERVAL);
+        }
+
+        function stopSlideshow() {
+            overlay.classList.remove("visible");
+            clearInterval(slideTimer);
+        }
+
+        function resetIdleTimer() {
+            stopSlideshow();
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(startSlideshow, IDLE_DELAY);
+        }
+
+        ["mousemove", "mousedown", "keydown", "touchstart", "scroll", "click"].forEach(function(evt) {
+            document.addEventListener(evt, resetIdleTimer, {
+                passive: true
+            });
+        });
+
+        resetIdleTimer();
+
+    })();
 </script>
