@@ -460,7 +460,13 @@ include 'includes/header.php';
         position: fixed;
         inset: 0;
         z-index: 9999;
-        background: radial-gradient(circle at 50% -10%, var(--navy) 0%, var(--navy-deep) 65%);
+
+        background:
+            radial-gradient(circle at 50% 35%,
+                var(--team-color-light, #1e3a8a) 0%,
+                var(--team-color, #0b1e78) 35%,
+                var(--team-color-dark, #050d33) 100%);
+
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -469,8 +475,29 @@ include 'includes/header.php';
         color: #fff;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.6s ease;
+
+        transition:
+            opacity 0.6s ease,
+            background 0.8s ease;
+
         padding: 24px;
+        overflow: hidden;
+    }
+
+    .idle-slideshow::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at center,
+                transparent 20%,
+                rgba(0, 0, 0, 0.35) 100%);
+        pointer-events: none;
+    }
+
+    .idle-slideshow>* {
+        position: relative;
+        z-index: 1;
     }
 
     .idle-slideshow.visible {
@@ -531,13 +558,25 @@ include 'includes/header.php';
     .idle-team-name {
         font-family: 'Oswald', sans-serif;
         font-weight: 700;
-        font-size: clamp(1.4rem, 3.5vw, 2rem);
+        font-size: clamp(2.2rem, 5vw, 4.2rem);
+        line-height: 1.05;
         text-transform: uppercase;
         margin-bottom: 8px;
+
+        /* High contrast against the team-color background */
+        color: #fff;
+        -webkit-text-stroke: 1px rgba(0, 0, 0, 0.25);
+
+        text-shadow:
+            0 2px 4px rgba(0, 0, 0, 0.75),
+            0 5px 14px rgba(0, 0, 0, 0.65),
+            0 0 24px rgba(0, 0, 0, 0.45);
+
+        transition: color 0.6s ease, text-shadow 0.6s ease;
     }
 
     .idle-team-points {
-        font-size: 1.05rem;
+        font-size: 30px;
         color: var(--gold);
         font-weight: 600;
         margin-bottom: 40px;
@@ -850,8 +889,75 @@ while ($w = $eventWinnersResult->fetch_assoc()) {
 
         if (!winners.length) return;
 
-        const IDLE_DELAY = 20000; // how long the page must sit untouched before the slideshow starts
-        const SLIDE_INTERVAL = 4500; // how long each winner stays on screen
+        const IDLE_DELAY = 20000;
+        const SLIDE_INTERVAL = 4500;
+
+        function getTeamColors(teamName) {
+            const name = teamName.toLowerCase();
+
+            if (name.includes("blue")) {
+                return {
+                    main: "#2563eb",
+                    light: "#60a5fa",
+                    dark: "#071a4d"
+                };
+            }
+
+            if (name.includes("red")) {
+                return {
+                    main: "#dc2626",
+                    light: "#f87171",
+                    dark: "#4a0808"
+                };
+            }
+
+            if (name.includes("green")) {
+                return {
+                    main: "#16a34a",
+                    light: "#4ade80",
+                    dark: "#052e16"
+                };
+            }
+
+            if (name.includes("yellow") || name.includes("gold")) {
+                return {
+                    main: "#eab308",
+                    light: "#fde047",
+                    dark: "#422006"
+                };
+            }
+
+            if (name.includes("orange")) {
+                return {
+                    main: "#ea580c",
+                    light: "#fb923c",
+                    dark: "#431407"
+                };
+            }
+
+            if (name.includes("violet")) {
+                return {
+                    main: "#9333ea",
+                    light: "#c084fc",
+                    dark: "#2e1065"
+                };
+            }
+
+            if (name.includes("pink")) {
+                return {
+                    main: "#db2777",
+                    light: "#f472b6",
+                    dark: "#500724"
+                };
+            }
+
+            // Default color
+            return {
+                main: "#0b1e78",
+                light: "#60a5fa",
+                dark: "#050d33"
+            };
+        }
 
         const overlay = document.getElementById("idleSlideshow");
         const eventNameEl = document.getElementById("idleEventName");
@@ -877,6 +983,14 @@ while ($w = $eventWinnersResult->fetch_assoc()) {
             eventNameEl.textContent = winner.event_name;
             teamNameEl.textContent = winner.team_name;
             pointsEl.textContent = winner.points + " pts \u00b7 1st Place";
+
+            // Get colors from team name
+            const colors = getTeamColors(winner.team_name);
+
+            // Apply colors to slideshow
+            overlay.style.setProperty("--team-color", colors.main);
+            overlay.style.setProperty("--team-color-light", colors.light);
+            overlay.style.setProperty("--team-color-dark", colors.dark);
 
             if (winner.logo_url) {
                 avatarEl.innerHTML = "";
